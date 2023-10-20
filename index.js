@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -34,8 +34,8 @@ async function run() {
     // Connect to the "brandDB" database and access its "brandCollection" collection
     const database = client.db("brandDB");
     const brandCollection = database.collection("brand");
-
-    // post
+    const productCollection = database.collection("product")
+    // brand post
     app.post("/brand", async(req, res)=> {
       const brandInfo = req.body;
       // console.log(brandInfo);
@@ -43,13 +43,23 @@ async function run() {
       res.send(result);
       // console.log(result);
     })
-    // get
+    // brand get
     app.get("/brand", async(req, res)=> {
       const cursor = brandCollection.find();
       const result = await cursor.toArray();
       res.send(result);
       console.log(result);
     })
+    
+    app.get("/brand/:brandname", async (req, res) => {
+      const brandname = req.params.brandname;
+      const cursor = { name: brandname }; 
+      const result = await brandCollection.find(cursor).toArray();
+      res.send(result);
+      console.log(result);
+    });
+
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -72,3 +82,4 @@ app.get("/", (req, res)=> {
 app.listen(port, ()=> {
   console.log(`Brand server is running port:${5000}`)
 });
+
