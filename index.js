@@ -101,6 +101,17 @@ async function run() {
           rating:updatedProduct.rating
         }
       }
+
+      // get for detailes
+      app.get("/addProduct/:id", async(req, res)=> {
+        const id = req.params.id;
+        const query = {_id:new ObjectId(id)};
+        const result = await productCollection.findOne(query);
+        res.send(result);
+        console.log(result);
+      })
+
+
       const result = await productCollection.updateOne(filter, newUpdatedProduct, options);
       res.send(result);
       console.log(result);
