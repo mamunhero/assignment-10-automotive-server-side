@@ -43,14 +43,14 @@ async function run() {
       res.send(result);
       // console.log(result);
     })
-    // brand get
+    // brand get read
     app.get("/brand", async(req, res)=> {
       const cursor = brandCollection.find();
       const result = await cursor.toArray();
       res.send(result);
       console.log(result);
     })
-    
+    // get when brand update
     app.get("/brand/:brandname", async (req, res) => {
       const brandname = req.params.brandname;
       const cursor = { name: brandname }; 
@@ -58,6 +58,55 @@ async function run() {
       res.send(result);
       console.log(result);
     });
+
+    // post addproducts
+    app.post("/addProduct", async(req, res)=>{
+      const newProduct = req.body
+      console.log(newProduct);
+      const result = await productCollection.insertOne(newProduct);
+      res.send(result);
+      console.log(result);
+    })
+
+    // get addproduct
+    app.get("/addProduct", async(req, res)=> {
+      const cursor = productCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+      console.log(result);
+    })
+
+    // get addproduct for update
+    app.get("/addProduct/:id", async(req, res)=> {
+      const id = req.params.id;
+      const query = {_id:new ObjectId(id)};
+      const result = await productCollection.findOne(query);
+      res.send(result);
+      console.log(result);
+    })
+
+    // put addproduct for update from
+    app.put("/addProduct/:id", async(req, res)=> {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)};
+      const options = { upsert: true };
+      const updatedProduct = req.body;
+      const newUpdatedProduct = {
+        $set:{
+          name:updatedProduct.name,
+          productname:updatedProduct.productname,
+          image:updatedProduct.image,
+          type:updatedProduct.type,
+          price:updatedProduct.price,
+          rating:updatedProduct.rating
+        }
+      }
+      const result = await productCollection.updateOne(filter, newUpdatedProduct, options);
+      res.send(result);
+      console.log(result);
+    })
+    
+
 
 
     // Send a ping to confirm a successful connection
