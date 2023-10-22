@@ -34,7 +34,8 @@ async function run() {
     // Connect to the "brandDB" database and access its "brandCollection" collection
     const database = client.db("brandDB");
     const brandCollection = database.collection("brand");
-    const productCollection = database.collection("product")
+    const productCollection = database.collection("product");
+    const cartCollection = database.collection("cart");
     // brand post
     app.post("/brand", async(req, res)=> {
       const brandInfo = req.body;
@@ -101,23 +102,47 @@ async function run() {
           rating:updatedProduct.rating
         }
       }
-
-      // get for detailes
-      app.get("/addProduct/:id", async(req, res)=> {
-        const id = req.params.id;
-        const query = {_id:new ObjectId(id)};
-        const result = await productCollection.findOne(query);
-        res.send(result);
-        console.log(result);
-      })
-
-
       const result = await productCollection.updateOne(filter, newUpdatedProduct, options);
       res.send(result);
       console.log(result);
     })
-    
+  // finished put
 
+   // get for detailes
+   app.get("/addProduct/details/:id", async(req, res)=> {
+    const id = req.params.id;
+    const query = {_id:new ObjectId(id)};
+    const result = await productCollection.findOne(query);
+    res.send(result);
+    console.log(result);
+  })
+  // finish detailes 
+
+  // start cartcolection post
+  app.post("/addToCart", async(req, res)=> {
+    const cart = req.body;
+    console.log(cart);
+    const result = await cartCollection.insertOne(cart)
+    res.send(result);
+    console.log(result);
+  })
+  // finished catCollection post
+  // start cartCollection get
+  app.get("/addToCart", async(req, res)=> {
+    const cursor = cartCollection.find();
+    const result = await cursor.toArray();
+    res.send(result);
+    console.log(result);
+  })
+  // finished cartColection get
+  // start cartCollection delete
+  app.delete("/addToCart/:id", async(req, res)=> {
+    const id = req.params.id;
+    const query = {_id:new ObjectId(id)};
+    const result = await cartCollection.deleteOne(query);
+    res.send(result);
+    console.log(result);
+  })
 
 
     // Send a ping to confirm a successful connection
